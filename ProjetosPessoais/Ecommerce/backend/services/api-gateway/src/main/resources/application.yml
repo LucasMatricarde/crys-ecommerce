@@ -71,3 +71,18 @@ management:
   metrics:
     tags:
       application: ${spring.application.name}
+  tracing:
+    sampling:
+      probability: 1.0
+  otlp:
+    tracing:
+      endpoint: ${OTEL_EXPORTER_OTLP_ENDPOINT:http://localhost:4318/v1/traces}
+
+# Gateway JWT auth. HS256 symmetric secret (no external IdP in this increment).
+# The default below is DEV-ONLY (>=32 chars, required by HS256); prod MUST override
+# JWT_SECRET with a real secret.
+crys:
+  auth:
+    secret: ${JWT_SECRET:crys-dev-only-secret-change-me-in-production-0123456789}
+    issuer: crys-gateway
+    token-ttl: 1h
