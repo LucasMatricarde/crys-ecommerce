@@ -1,0 +1,61 @@
+/* ============================================================
+   CRYS. — Typography tokens
+   Display/Heads: Syne · Body: Inter · Data/Mono: Space Mono
+   ============================================================ */
+
+:root {
+  /* ---- Families ---- */
+  --font-display: "Syne", "Segoe UI", system-ui, sans-serif;        /* hero + headings */
+  --font-body:    "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono:    "Space Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+
+  /* ---- Weights ---- */
+  --weight-regular:   400;
+  --weight-semibold:  600;
+  --weight-bold:      700;
+  --weight-extrabold: 800;
+
+  /* ---- Type scale (size / line-height / tracking) ---- */
+  /* Display — Syne ExtraBold */
+  --text-display:      72px;
+  --text-display-lh:   80px;
+  --text-display-ls:   -0.02em;
+
+  /* H1 — Syne ExtraBold */
+  --text-h1:    48px;
+  --text-h1-lh: 52px;
+  --text-h1-ls: -0.02em;
+
+  /* H2 — Syne Bold */
+  --text-h2:    32px;
+  --text-h2-lh: 38px;
+  --text-h2-ls: -0.01em;
+
+  /* H3 — Syne SemiBold */
+  --text-h3:    24px;
+  --text-h3-lh: 30px;
+  --text-h3-ls: -0.01em;
+
+  /* Title — Syne Bold (card titles) */
+  --text-title:    18px;
+  --text-title-lh: 22px;
+
+  /* Body large — Inter Regular */
+  --text-body-lg:    18px;
+  --text-body-lg-lh: 28px;
+
+  /* Body — Inter Regular */
+  --text-body:    16px;
+  --text-body-lh: 24px;
+
+  /* Small / label — Inter SemiBold */
+  --text-label:    13px;
+  --text-label-lh: 18px;
+  --text-label-ls: 0.04em;
+
+  /* Mono / data — Space Mono */
+  --text-mono:     13px;
+  --text-mono-lh:  18px;
+  --text-mono-sm:  11px;
+  --text-mono-lg:  20px;
+}

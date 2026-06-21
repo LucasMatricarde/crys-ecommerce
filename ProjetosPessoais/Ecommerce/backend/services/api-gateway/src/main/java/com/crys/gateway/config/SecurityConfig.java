@@ -17,9 +17,13 @@ import org.springframework.security.oauth2.jwt.JwtIssuerValidator;
 import org.springframework.security.oauth2.jwt.NimbusReactiveJwtDecoder;
 import org.springframework.security.oauth2.jwt.ReactiveJwtDecoder;
 import org.springframework.security.web.server.SecurityWebFilterChain;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.reactive.CorsConfigurationSource;
+import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
 
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 /**
  * Makes the gateway the single authentication enforcement point.
@@ -45,6 +49,10 @@ public class SecurityConfig {
     @Bean
     public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) {
         return http
+                // CORS handled in the security chain so it covers BOTH gateway-routed
+                // requests and the local /api/auth/token controller (which the gateway's
+                // globalcors does not reach).
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 // Stateless bearer-token API; no browser session/CSRF tokens.
                 .csrf(ServerHttpSecurity.CsrfSpec::disable)
                 .authorizeExchange(exchange -> exchange
@@ -55,6 +63,22 @@ public class SecurityConfig {
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt -> {
                 }))
                 .build();
+    }
+
+    /**
+     * Single CORS source for the whole WebFilter chain. Mirrors the previous gateway
+     * globalcors values ({@code *} origin, GET/POST/OPTIONS, any header) but also applies
+     * to local controllers like the demo token mint endpoint.
+     */
+    private CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration config = new CorsConfiguration();
+        config.setAllowedOrigins(List.of("*"));
+        config.setAllowedMethods(List.of("GET", "POST", "OPTIONS"));
+        config.setAllowedHeaders(List.of("*"));
+        config.setMaxAge(3600L);
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config);
+        return source;
     }
 
     /** Builds the HS256 signing key shared by the decoder (validate) and encoder (mint). */

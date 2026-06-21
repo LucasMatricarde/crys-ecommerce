@@ -84,6 +84,31 @@ class GatewayAuthIT {
     }
 
     @Test
+    void corsPreflightOnLocalAuthEndpointIsAllowed() {
+        // /api/auth/token is served by a local @RestController, not a gateway route,
+        // so it is NOT covered by spring.cloud.gateway.globalcors. The preflight must
+        // still succeed for the browser SPA on a different origin to log in.
+        client().options().uri("/api/auth/token")
+                .header(HttpHeaders.ORIGIN, "http://localhost:5173")
+                .header(HttpHeaders.ACCESS_CONTROL_REQUEST_METHOD, "POST")
+                .header(HttpHeaders.ACCESS_CONTROL_REQUEST_HEADERS, "content-type")
+                .exchange()
+                .expectStatus().isOk()
+                .expectHeader().valueEquals(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, "*");
+    }
+
+    @Test
+    void corsPreflightOnRoutedEndpointIsAllowed() {
+        client().options().uri("/api/orders")
+                .header(HttpHeaders.ORIGIN, "http://localhost:5173")
+                .header(HttpHeaders.ACCESS_CONTROL_REQUEST_METHOD, "POST")
+                .header(HttpHeaders.ACCESS_CONTROL_REQUEST_HEADERS, "content-type,authorization")
+                .exchange()
+                .expectStatus().isOk()
+                .expectHeader().valueEquals(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, "*");
+    }
+
+    @Test
     void protectedRouteWithValidTokenPassesAuth() {
         String token = mintToken();
 

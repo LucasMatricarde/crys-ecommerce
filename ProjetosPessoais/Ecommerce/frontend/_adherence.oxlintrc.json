@@ -1,0 +1,310 @@
+{
+  "plugins": [
+    "react",
+    "import"
+  ],
+  "rules": {
+    "react/forbid-elements": [
+      "warn",
+      {
+        "forbid": []
+      }
+    ],
+    "no-restricted-imports": [
+      "warn",
+      {
+        "patterns": [
+          {
+            "group": [
+              "components/brand/**",
+              "components/commerce/**",
+              "components/core/**",
+              "components/navigation/**",
+              "ui_kits/storefront/**"
+            ],
+            "message": "Import design-system components from 'index.js', not component internals."
+          }
+        ]
+      }
+    ],
+    "no-restricted-syntax": [
+      "warn",
+      {
+        "selector": "Literal[value=/#[0-9a-fA-F]{3,8}\\b/]",
+        "message": "Raw hex color — use a design-system color token via var()."
+      },
+      {
+        "selector": "Literal[value=/\\b\\d+px\\b/]",
+        "message": "Raw px value — use a design-system spacing token via var()."
+      },
+      {
+        "selector": "Literal[value=/font-family\\s*:\\s*(?!['\\\"]?(?:Syne|Inter|Space Mono))/i]",
+        "message": "Font not provided by the design system. Available: Syne, Inter, Space Mono."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='Badge'] > JSXAttribute > JSXIdentifier[name!=/^(?:tone|children|key|ref|className|style|children)$/]",
+        "message": "<Badge> doesn't accept that prop. Declared props: tone, children."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='Button'] > JSXAttribute > JSXIdentifier[name!=/^(?:variant|size|disabled|iconLeft|iconRight|children|key|ref|className|style|children)$/]",
+        "message": "<Button> doesn't accept that prop. Declared props: variant, size, disabled, iconLeft, iconRight, children."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='Icon'] > JSXAttribute > JSXIdentifier[name!=/^(?:name|size|color|strokeWidth|key|ref|className|style|children)$/]",
+        "message": "<Icon> doesn't accept that prop. Declared props: name, size, color, strokeWidth."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='Input'] > JSXAttribute > JSXIdentifier[name!=/^(?:icon|key|ref|className|style|children)$/]",
+        "message": "<Input> doesn't accept that prop. Declared props: icon."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='NavBar'] > JSXAttribute > JSXIdentifier[name!=/^(?:brand|links|active|cartCount|onCart|onNavigate|key|ref|className|style|children)$/]",
+        "message": "<NavBar> doesn't accept that prop. Declared props: brand, links, active, cartCount, onCart, onNavigate."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='PriceChip'] > JSXAttribute > JSXIdentifier[name!=/^(?:price|unit|key|ref|className|style|children)$/]",
+        "message": "<PriceChip> doesn't accept that prop. Declared props: price, unit."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='ProductCard'] > JSXAttribute > JSXIdentifier[name!=/^(?:name|strain|thc|data|price|image|onAdd|key|ref|className|style|children)$/]",
+        "message": "<ProductCard> doesn't accept that prop. Declared props: name, strain, thc, data, price, image, onAdd."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='ResinBlob'] > JSXAttribute > JSXIdentifier[name!=/^(?:size|glow|key|ref|className|style|children)$/]",
+        "message": "<ResinBlob> doesn't accept that prop. Declared props: size, glow."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='StrainTag'] > JSXAttribute > JSXIdentifier[name!=/^(?:type|thc|key|ref|className|style|children)$/]",
+        "message": "<StrainTag> doesn't accept that prop. Declared props: type, thc."
+      }
+    ]
+  },
+  "overrides": [
+    {
+      "files": [
+        "**/index.js"
+      ],
+      "rules": {
+        "no-restricted-imports": "off"
+      }
+    }
+  ],
+  "x-omelette": {
+    "components": {
+      "Badge": {
+        "replaces": []
+      },
+      "Button": {
+        "replaces": []
+      },
+      "Icon": {
+        "replaces": []
+      },
+      "Input": {
+        "replaces": []
+      },
+      "NavBar": {
+        "replaces": []
+      },
+      "PriceChip": {
+        "replaces": []
+      },
+      "ProductCard": {
+        "replaces": []
+      },
+      "ResinBlob": {
+        "replaces": []
+      },
+      "StrainTag": {
+        "replaces": []
+      }
+    },
+    "tokens": [
+      "--accent-primary",
+      "--accent-secondary",
+      "--amber-burnt",
+      "--amber-core",
+      "--amber-deep",
+      "--amber-honey",
+      "--bg-base",
+      "--bg-elevated",
+      "--bg-raised",
+      "--bg-surface",
+      "--border-frost",
+      "--border-frost-faint",
+      "--border-frost-strong",
+      "--font-body",
+      "--font-display",
+      "--font-mono",
+      "--glow-amber",
+      "--glow-amber-soft",
+      "--glow-violet",
+      "--ink-muted",
+      "--ink-primary",
+      "--inset-frost",
+      "--inset-frost-strong",
+      "--iridescent-cyan",
+      "--iridescent-magenta",
+      "--iridescent-violet",
+      "--radius-lg",
+      "--radius-md",
+      "--radius-pill",
+      "--radius-sm",
+      "--resin-black-base",
+      "--resin-black-elevated",
+      "--resin-black-raised",
+      "--resin-black-surface",
+      "--shadow-card",
+      "--shadow-drop",
+      "--shadow-molten",
+      "--spacing-1",
+      "--spacing-12",
+      "--spacing-16",
+      "--spacing-2",
+      "--spacing-24",
+      "--spacing-3",
+      "--spacing-32",
+      "--spacing-4",
+      "--spacing-6",
+      "--spacing-8",
+      "--state-focus",
+      "--strain-hybrid",
+      "--strain-indica",
+      "--strain-sativa",
+      "--text-body",
+      "--text-body-lg",
+      "--text-body-lg-lh",
+      "--text-body-lh",
+      "--text-display",
+      "--text-display-lh",
+      "--text-display-ls",
+      "--text-h1",
+      "--text-h1-lh",
+      "--text-h1-ls",
+      "--text-h2",
+      "--text-h2-lh",
+      "--text-h2-ls",
+      "--text-h3",
+      "--text-h3-lh",
+      "--text-h3-ls",
+      "--text-label",
+      "--text-label-lh",
+      "--text-label-ls",
+      "--text-mono",
+      "--text-mono-lg",
+      "--text-mono-lh",
+      "--text-mono-sm",
+      "--text-muted",
+      "--text-on-amber",
+      "--text-primary",
+      "--text-title",
+      "--text-title-lh",
+      "--tint-magenta-06",
+      "--tint-violet-12",
+      "--trichome-core",
+      "--trichome-deep",
+      "--trichome-frost",
+      "--trichome-ice",
+      "--weight-bold",
+      "--weight-extrabold",
+      "--weight-regular",
+      "--weight-semibold"
+    ],
+    "tokenKinds": {
+      "--resin-black-base": "color",
+      "--resin-black-surface": "color",
+      "--resin-black-elevated": "color",
+      "--resin-black-raised": "color",
+      "--trichome-deep": "color",
+      "--trichome-core": "color",
+      "--trichome-frost": "color",
+      "--trichome-ice": "color",
+      "--amber-honey": "color",
+      "--amber-core": "color",
+      "--amber-deep": "color",
+      "--amber-burnt": "color",
+      "--iridescent-violet": "color",
+      "--iridescent-magenta": "color",
+      "--iridescent-cyan": "color",
+      "--ink-primary": "color",
+      "--ink-muted": "color",
+      "--bg-base": "color",
+      "--bg-surface": "color",
+      "--bg-elevated": "color",
+      "--bg-raised": "color",
+      "--text-primary": "font",
+      "--text-muted": "font",
+      "--text-on-amber": "font",
+      "--accent-primary": "color",
+      "--accent-secondary": "color",
+      "--strain-indica": "color",
+      "--strain-sativa": "color",
+      "--strain-hybrid": "color",
+      "--state-focus": "color",
+      "--border-frost": "color",
+      "--border-frost-strong": "color",
+      "--border-frost-faint": "color",
+      "--glow-amber": "color",
+      "--glow-amber-soft": "color",
+      "--glow-violet": "color",
+      "--tint-violet-12": "color",
+      "--tint-magenta-06": "color",
+      "--font-display": "font",
+      "--font-body": "font",
+      "--font-mono": "font",
+      "--weight-regular": "font",
+      "--weight-semibold": "font",
+      "--weight-bold": "font",
+      "--weight-extrabold": "font",
+      "--text-display": "font",
+      "--text-display-lh": "font",
+      "--text-display-ls": "font",
+      "--text-h1": "font",
+      "--text-h1-lh": "font",
+      "--text-h1-ls": "font",
+      "--text-h2": "font",
+      "--text-h2-lh": "font",
+      "--text-h2-ls": "font",
+      "--text-h3": "font",
+      "--text-h3-lh": "font",
+      "--text-h3-ls": "font",
+      "--text-title": "font",
+      "--text-title-lh": "font",
+      "--text-body-lg": "font",
+      "--text-body-lg-lh": "font",
+      "--text-body": "font",
+      "--text-body-lh": "font",
+      "--text-label": "font",
+      "--text-label-lh": "font",
+      "--text-label-ls": "font",
+      "--text-mono": "font",
+      "--text-mono-lh": "font",
+      "--text-mono-sm": "font",
+      "--text-mono-lg": "font",
+      "--spacing-1": "spacing",
+      "--spacing-2": "spacing",
+      "--spacing-3": "spacing",
+      "--spacing-4": "spacing",
+      "--spacing-6": "spacing",
+      "--spacing-8": "spacing",
+      "--spacing-12": "spacing",
+      "--spacing-16": "spacing",
+      "--spacing-24": "spacing",
+      "--spacing-32": "spacing",
+      "--radius-sm": "radius",
+      "--radius-md": "radius",
+      "--radius-lg": "radius",
+      "--radius-pill": "radius",
+      "--shadow-card": "shadow",
+      "--shadow-molten": "shadow",
+      "--shadow-drop": "shadow",
+      "--inset-frost": "spacing",
+      "--inset-frost-strong": "spacing"
+    },
+    "fontFamilies": [
+      "Inter",
+      "Space Mono",
+      "Syne"
+    ]
+  }
+}

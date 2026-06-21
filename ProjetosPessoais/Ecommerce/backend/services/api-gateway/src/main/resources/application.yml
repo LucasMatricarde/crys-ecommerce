@@ -10,13 +10,9 @@ spring:
       port: ${REDIS_PORT:6379}
   cloud:
     gateway:
-      globalcors:
-        cors-configurations:
-          '[/**]':
-            allowedOrigins: "*"
-            allowedMethods: [GET, POST, OPTIONS]
-            allowedHeaders: "*"
-            maxAge: 3600
+      # CORS is configured in SecurityConfig (Spring Security .cors()) so it covers both
+      # routed paths and the local /api/auth/token controller. Do not re-add globalcors
+      # here — it would double the Access-Control-Allow-Origin header on routed responses.
       routes:
         - id: catalog
           uri: ${CATALOG_URI:http://localhost:8081}
