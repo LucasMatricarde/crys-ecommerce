@@ -1,0 +1,41 @@
+server:
+  port: 8082
+
+spring:
+  application:
+    name: order-service
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/crys_order}
+    username: ${DB_USER:crys}
+    password: ${DB_PASSWORD:crys}
+  jpa:
+    hibernate:
+      ddl-auto: update
+    open-in-view: false
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP:localhost:9092}
+    consumer:
+      auto-offset-reset: earliest
+
+crys:
+  catalog:
+    uri: ${CATALOG_URI:http://localhost:8081}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus,metrics
+  endpoint:
+    health:
+      probes:
+        enabled: true
+  metrics:
+    tags:
+      application: ${spring.application.name}
+  tracing:
+    sampling:
+      probability: 1.0
+  otlp:
+    tracing:
+      endpoint: ${OTEL_EXPORTER_OTLP_ENDPOINT:http://localhost:4318/v1/traces}

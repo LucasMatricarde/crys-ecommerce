@@ -1,0 +1,73 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: api-gateway
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+  cloud:
+    gateway:
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOrigins: "*"
+            allowedMethods: [GET, POST, OPTIONS]
+            allowedHeaders: "*"
+            maxAge: 3600
+      routes:
+        - id: catalog
+          uri: ${CATALOG_URI:http://localhost:8081}
+          predicates:
+            - Path=/api/catalog/**
+          filters:
+            - RewritePath=/api/catalog/(?<segment>.*), /catalog/$\{segment}
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.replenishRate: 10
+                redis-rate-limiter.burstCapacity: 20
+                key-resolver: "#{@ipKeyResolver}"
+        - id: orders
+          uri: ${ORDER_URI:http://localhost:8082}
+          predicates:
+            - Path=/api/orders/**
+          filters:
+            - RewritePath=/api/orders(?<segment>/?.*), /orders$\{segment}
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.replenishRate: 10
+                redis-rate-limiter.burstCapacity: 20
+                key-resolver: "#{@ipKeyResolver}"
+        - id: order-views
+          uri: ${ORDER_QUERY_URI:http://localhost:8085}
+          predicates:
+            - Path=/api/order-views/**
+          filters:
+            - RewritePath=/api/order-views(?<segment>/?.*), /order-views$\{segment}
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.replenishRate: 10
+                redis-rate-limiter.burstCapacity: 20
+                key-resolver: "#{@ipKeyResolver}"
+        - id: notifications
+          uri: ${NOTIFICATION_URI:http://localhost:8086}
+          predicates:
+            - Path=/api/notifications/**
+          filters:
+            - RewritePath=/api/notifications(?<segment>/?.*), /notifications$\{segment}
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.replenishRate: 10
+                redis-rate-limiter.burstCapacity: 20
+                key-resolver: "#{@ipKeyResolver}"
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus,metrics
+  metrics:
+    tags:
+      application: ${spring.application.name}
