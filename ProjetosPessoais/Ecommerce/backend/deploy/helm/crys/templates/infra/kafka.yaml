@@ -1,0 +1,81 @@
+{{- $kafka := .Values.infra.kafka -}}
+apiVersion: v1
+kind: Service
+metadata:
+  name: kafka
+  labels:
+    {{- include "crys.labels" . | nindent 4 }}
+    {{- include "crys.selectorLabels" "kafka" | nindent 4 }}
+spec:
+  clusterIP: None
+  # KRaft controller connects to its own Service DNS (kafka:9093) at startup, before the
+  # broker is Ready. Headless-Service DNS normally omits not-ready pods, which deadlocks
+  # single-node bootstrap (UnknownHostException: kafka). Publish the address immediately.
+  publishNotReadyAddresses: true
+  selector:
+    {{- include "crys.selectorLabels" "kafka" | nindent 4 }}
+  ports:
+    - name: broker
+      port: 9092
+      targetPort: 9092
+    - name: controller
+      port: 9093
+      targetPort: 9093
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: kafka
+  labels:
+    {{- include "crys.labels" . | nindent 4 }}
+    {{- include "crys.selectorLabels" "kafka" | nindent 4 }}
+spec:
+  serviceName: kafka
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "crys.selectorLabels" "kafka" | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "crys.labels" . | nindent 8 }}
+        {{- include "crys.selectorLabels" "kafka" | nindent 8 }}
+    spec:
+      containers:
+        - name: kafka
+          image: {{ $kafka.image }}
+          ports:
+            - containerPort: 9092
+            - containerPort: 9093
+          # KRaft single-node — copied from docker-compose. Advertised listener uses the
+          # in-cluster Service DNS name `kafka` so clients reconnect to the right address.
+          env:
+            - { name: KAFKA_NODE_ID, value: "1" }
+            - { name: KAFKA_PROCESS_ROLES, value: "broker,controller" }
+            - { name: KAFKA_CONTROLLER_QUORUM_VOTERS, value: "1@kafka:9093" }
+            - { name: KAFKA_LISTENERS, value: "PLAINTEXT://:9092,CONTROLLER://:9093" }
+            - { name: KAFKA_ADVERTISED_LISTENERS, value: "PLAINTEXT://kafka:9092" }
+            - { name: KAFKA_LISTENER_SECURITY_PROTOCOL_MAP, value: "CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT" }
+            - { name: KAFKA_CONTROLLER_LISTENER_NAMES, value: "CONTROLLER" }
+            - { name: KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR, value: "1" }
+            - { name: KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR, value: "1" }
+            - { name: KAFKA_TRANSACTION_STATE_LOG_MIN_ISR, value: "1" }
+            - { name: KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS, value: "0" }
+          volumeMounts:
+            - name: data
+              mountPath: /var/lib/kafka/data
+          readinessProbe:
+            exec:
+              command: ["/opt/kafka/bin/kafka-topics.sh", "--bootstrap-server", "localhost:9092", "--list"]
+            initialDelaySeconds: 15
+            periodSeconds: 15
+            timeoutSeconds: 10
+            failureThreshold: 5
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: {{ $kafka.storage }}

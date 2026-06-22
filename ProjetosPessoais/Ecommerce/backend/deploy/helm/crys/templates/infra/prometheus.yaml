@@ -1,0 +1,72 @@
+{{- $prom := .Values.infra.prometheus -}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: prometheus-config
+  labels:
+    {{- include "crys.labels" . | nindent 4 }}
+data:
+  # Mirrors backend/infra/observability/prometheus.yml. Targets are the in-cluster
+  # Service DNS names (identical to the compose service names), so no rewrite needed.
+  prometheus.yml: |
+    global:
+      scrape_interval: 15s
+    scrape_configs:
+      {{- range $name, $svc := .Values.services }}
+      - job_name: {{ $name }}
+        metrics_path: /actuator/prometheus
+        static_configs:
+          - targets: ["{{ $name }}:{{ $svc.port }}"]
+      {{- end }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: prometheus
+  labels:
+    {{- include "crys.labels" . | nindent 4 }}
+    {{- include "crys.selectorLabels" "prometheus" | nindent 4 }}
+spec:
+  selector:
+    {{- include "crys.selectorLabels" "prometheus" | nindent 4 }}
+  ports:
+    - name: http
+      port: 9090
+      targetPort: 9090
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: prometheus
+  labels:
+    {{- include "crys.labels" . | nindent 4 }}
+    {{- include "crys.selectorLabels" "prometheus" | nindent 4 }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "crys.selectorLabels" "prometheus" | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "crys.labels" . | nindent 8 }}
+        {{- include "crys.selectorLabels" "prometheus" | nindent 8 }}
+    spec:
+      containers:
+        - name: prometheus
+          image: {{ $prom.image }}
+          ports:
+            - containerPort: 9090
+          volumeMounts:
+            - name: config
+              mountPath: /etc/prometheus
+          readinessProbe:
+            httpGet:
+              path: /-/ready
+              port: 9090
+            periodSeconds: 10
+            failureThreshold: 5
+      volumes:
+        - name: config
+          configMap:
+            name: prometheus-config

@@ -1,0 +1,50 @@
+{{- $grafana := .Values.infra.grafana -}}
+apiVersion: v1
+kind: Service
+metadata:
+  name: grafana
+  labels:
+    {{- include "crys.labels" . | nindent 4 }}
+    {{- include "crys.selectorLabels" "grafana" | nindent 4 }}
+spec:
+  selector:
+    {{- include "crys.selectorLabels" "grafana" | nindent 4 }}
+  ports:
+    - name: http
+      port: 3000
+      targetPort: 3000
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: grafana
+  labels:
+    {{- include "crys.labels" . | nindent 4 }}
+    {{- include "crys.selectorLabels" "grafana" | nindent 4 }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "crys.selectorLabels" "grafana" | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "crys.labels" . | nindent 8 }}
+        {{- include "crys.selectorLabels" "grafana" | nindent 8 }}
+    spec:
+      containers:
+        - name: grafana
+          image: {{ $grafana.image }}
+          env:
+            - name: GF_SECURITY_ADMIN_PASSWORD
+              value: {{ $grafana.adminPassword | quote }}
+            - name: GF_AUTH_ANONYMOUS_ENABLED
+              value: "true"
+          ports:
+            - containerPort: 3000
+          readinessProbe:
+            httpGet:
+              path: /api/health
+              port: 3000
+            periodSeconds: 10
+            failureThreshold: 5

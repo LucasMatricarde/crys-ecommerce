@@ -1,0 +1,113 @@
+# CRYS umbrella chart values. Mirrors backend/infra/docker-compose.yml.
+# One generic Deployment + Service is rendered per entry in `.Values.services`.
+
+image:
+  # Images are built locally and loaded into the cluster (see deploy/build-images.sh).
+  # No registry pull: tag `dev` + IfNotPresent.
+  registry: ""        # e.g. "ghcr.io/acme/"; empty = local images crys/<svc>:dev
+  repoPrefix: crys
+  tag: dev
+  pullPolicy: IfNotPresent
+
+# Shared liveness/readiness/startup probe defaults applied to every service container.
+# Spring Boot exposes these health groups when management.endpoint.health.probes.enabled=true.
+# JVM cold start is slow → a generous startupProbe holds off liveness until the app is up.
+probes:
+  liveness:
+    path: /actuator/health/liveness
+    periodSeconds: 10
+    timeoutSeconds: 3
+    failureThreshold: 3
+  readiness:
+    path: /actuator/health/readiness
+    periodSeconds: 10
+    timeoutSeconds: 3
+    failureThreshold: 3
+  startup:
+    path: /actuator/health/readiness
+    periodSeconds: 10
+    timeoutSeconds: 3
+    failureThreshold: 30   # 30 * 10s = 5 min budget for JVM + infra convergence
+
+# Shared non-secret env injected into every service via a ConfigMap (envFrom).
+# Uses in-cluster Service DNS names.
+sharedEnv:
+  REDIS_HOST: redis
+  REDIS_PORT: "6379"
+  KAFKA_BOOTSTRAP: kafka:9092
+  OTEL_EXPORTER_OTLP_ENDPOINT: http://jaeger:4318/v1/traces
+  CATALOG_URI: http://catalog-service:8081
+  ORDER_URI: http://order-service:8082
+  ORDER_QUERY_URI: http://order-query-service:8085
+  NOTIFICATION_URI: http://notification-service:8086
+
+# Secret values injected into every service via a Secret (envFrom).
+# DEV DEFAULTS — prod MUST override (esp. jwtSecret, dbPassword).
+secrets:
+  jwtSecret: crys-dev-only-secret-change-me-in-production-0123456789
+  dbUser: crys
+  dbPassword: crys
+
+# Application services. Adding a service = a new entry here, no template change.
+services:
+  api-gateway:
+    port: 8080
+    replicas: 1
+    # Only external entrypoint — expose via NodePort for local access.
+    serviceType: NodePort
+    nodePort: 30080
+    env: {}
+  catalog-service:
+    port: 8081
+    replicas: 1
+    seedProfile: true
+    env:
+      MONGODB_URI: mongodb://mongo:27017/crys
+  order-service:
+    port: 8082
+    replicas: 1
+    env:
+      DB_URL: jdbc:postgresql://postgres:5432/crys_order
+  inventory-service:
+    port: 8083
+    replicas: 1
+    seedProfile: true
+    env:
+      DB_URL: jdbc:postgresql://postgres:5432/crys_inventory
+  payment-service:
+    port: 8084
+    replicas: 1
+    env:
+      DB_URL: jdbc:postgresql://postgres:5432/crys_payment
+  order-query-service:
+    port: 8085
+    replicas: 1
+    env:
+      MONGODB_URI: mongodb://mongo:27017/crys_order_query
+  notification-service:
+    port: 8086
+    replicas: 1
+    env:
+      MONGODB_URI: mongodb://mongo:27017/crys_notification
+
+# In-cluster infra (parity with docker-compose). Single-replica dev infra.
+infra:
+  postgres:
+    image: postgres:16
+    storage: 1Gi
+    db: crys
+  mongo:
+    image: mongo:7
+    storage: 1Gi
+  redis:
+    image: redis:7-alpine
+  kafka:
+    image: apache/kafka:3.8.1
+    storage: 1Gi
+  jaeger:
+    image: jaegertracing/all-in-one:1.60
+  prometheus:
+    image: prom/prometheus:v2.54.1
+  grafana:
+    image: grafana/grafana:11.2.0
+    adminPassword: crys

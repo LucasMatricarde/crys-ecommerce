@@ -1,0 +1,22 @@
+{{- /* One ClusterIP Service per service; api-gateway may be NodePort (only ingress). */ -}}
+{{- range $name, $svc := .Values.services }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ $name }}
+  labels:
+    {{- include "crys.labels" $ | nindent 4 }}
+    {{- include "crys.selectorLabels" $name | nindent 4 }}
+spec:
+  type: {{ $svc.serviceType | default "ClusterIP" }}
+  selector:
+    {{- include "crys.selectorLabels" $name | nindent 4 }}
+  ports:
+    - name: http
+      port: {{ $svc.port }}
+      targetPort: http
+      {{- if and (eq ($svc.serviceType | default "ClusterIP") "NodePort") $svc.nodePort }}
+      nodePort: {{ $svc.nodePort }}
+      {{- end }}
+{{- end }}

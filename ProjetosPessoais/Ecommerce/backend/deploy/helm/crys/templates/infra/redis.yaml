@@ -1,0 +1,44 @@
+{{- $redis := .Values.infra.redis -}}
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis
+  labels:
+    {{- include "crys.labels" . | nindent 4 }}
+    {{- include "crys.selectorLabels" "redis" | nindent 4 }}
+spec:
+  selector:
+    {{- include "crys.selectorLabels" "redis" | nindent 4 }}
+  ports:
+    - name: redis
+      port: 6379
+      targetPort: 6379
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis
+  labels:
+    {{- include "crys.labels" . | nindent 4 }}
+    {{- include "crys.selectorLabels" "redis" | nindent 4 }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "crys.selectorLabels" "redis" | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "crys.labels" . | nindent 8 }}
+        {{- include "crys.selectorLabels" "redis" | nindent 8 }}
+    spec:
+      containers:
+        - name: redis
+          image: {{ $redis.image }}
+          ports:
+            - containerPort: 6379
+          readinessProbe:
+            exec:
+              command: ["redis-cli", "ping"]
+            periodSeconds: 10
+            failureThreshold: 5
