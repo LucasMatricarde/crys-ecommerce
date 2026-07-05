@@ -115,6 +115,9 @@ services:
       ORDER_URI: http://order-service:8082
       ORDER_QUERY_URI: http://order-query-service:8085
       NOTIFICATION_URI: http://notification-service:8086
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://jaeger:4318/v1/traces
+      # Fixed dev secret for JWT signing/validation. PROD MUST OVERRIDE with a real secret.
+      JWT_SECRET: crys-dev-only-secret-change-me-in-production-0123456789
     ports: ["8080:8080"]
     depends_on:
       redis: { condition: service_healthy }

@@ -1,0 +1,25 @@
+<!-- @dsCard group="Colors" viewport="700x150" name="Resin Black — surfaces" subtitle="Dark-first neutral surface ramp" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<link rel="stylesheet" href="../styles.css" />
+<style>
+  html, body { margin: 0; }
+  body { background: var(--bg-base); padding: 20px; font-family: var(--font-mono); }
+  .row { display: flex; gap: 14px; }
+  .sw { flex: 1; }
+  .chip { height: 64px; border-radius: var(--radius-md); box-shadow: var(--inset-frost); }
+  .name { color: var(--text-primary); font-size: 11px; margin-top: 8px; }
+  .hex { color: var(--text-muted); font-size: 10px; margin-top: 2px; }
+</style>
+</head>
+<body>
+<div class="row">
+  <div class="sw"><div class="chip" style="background:var(--resin-black-base)"></div><div class="name">base</div><div class="hex">#07090A</div></div>
+  <div class="sw"><div class="chip" style="background:var(--resin-black-surface)"></div><div class="name">surface</div><div class="hex">#0B0F0C</div></div>
+  <div class="sw"><div class="chip" style="background:var(--resin-black-elevated)"></div><div class="name">elevated</div><div class="hex">#12171A</div></div>
+  <div class="sw"><div class="chip" style="background:var(--resin-black-raised)"></div><div class="name">raised</div><div class="hex">#1A2125</div></div>
+</div>
+</body>
+</html>

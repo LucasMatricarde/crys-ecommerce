@@ -1,0 +1,11 @@
+apiVersion: v2
+name: crys
+description: >-
+  CRYS cannabis ecommerce — full stack (7 Spring Boot microservices + Kafka saga,
+  postgres/mongo/redis/kafka infra, jaeger/prometheus/grafana observability) for a
+  local Kubernetes cluster. docker-compose parity, single-command install.
+type: application
+# Chart version is independent of the app; bump on chart changes.
+version: 0.1.0
+# Tracks the backend (root build.gradle.kts version).
+appVersion: "0.1.0"

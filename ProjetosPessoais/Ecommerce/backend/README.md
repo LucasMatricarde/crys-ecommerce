@@ -16,7 +16,7 @@ saga (event-driven). Reliability via transactional outbox + idempotent consumers
 | 1 Catalog | `catalog-service` (Mongo + Redis cache), `api-gateway` | ✅ done |
 | 2 Order + Saga core | `order/inventory/payment-service`, Kafka orchestration, outbox, idempotency, DLQ | ✅ done |
 | 3 Notification + CQRS projection | — | ⏳ next |
-| 4 Hardening | JWT auth, full tracing, K8s/Helm | planned |
+| 4 Hardening | JWT auth, full tracing, K8s/Helm | ✅ done |
 
 ## Layout
 
@@ -106,6 +106,38 @@ Brings up the datastores, Kafka, the observability stack, and both services.
 | Prometheus | http://localhost:9090 |
 | Grafana (anon enabled) | http://localhost:3000 |
 | Jaeger UI | http://localhost:16686 |
+
+## Kubernetes (Helm)
+
+The same stack — 7 services plus infra and observability — deploys to a local cluster
+via a single umbrella Helm chart (`deploy/helm/crys`). The chart is docker-compose
+parity: in-cluster postgres/mongo/redis/kafka/jaeger/prometheus/grafana, env-driven
+config, and Kubernetes liveness/readiness/startup probes wired to the Spring Boot
+Actuator health groups.
+
+**Prerequisites:** [`kind`](https://kind.sigs.k8s.io/) (or minikube), `helm`, `kubectl`, Docker.
+
+```bash
+# 1. cluster + build/load the 7 service images (no registry needed)
+kind create cluster
+./deploy/build-images.sh                 # CLUSTER=minikube ./deploy/build-images.sh
+
+# 2. install the whole stack
+helm install crys ./deploy/helm/crys
+kubectl get pods -w                       # wait until all infra + 7 services are Ready
+
+# 3. reach the gateway (only external entrypoint) + observability
+kubectl port-forward svc/api-gateway 8080:8080
+kubectl port-forward svc/jaeger 16686:16686
+kubectl port-forward svc/prometheus 9090:9090
+
+# teardown
+helm uninstall crys && kind delete cluster
+```
+
+The dev `JWT_SECRET` / DB password ship as chart defaults — **prod must override**:
+`helm install crys ./deploy/helm/crys --set secrets.jwtSecret=<real> --set secrets.dbPassword=<real>`.
+See `deploy/helm/crys/README.md` for the values reference.
 
 ## API contract (Inc 1)
 

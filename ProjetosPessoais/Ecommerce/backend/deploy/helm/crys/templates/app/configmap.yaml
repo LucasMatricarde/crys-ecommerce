@@ -1,0 +1,11 @@
+{{- /* Shared non-secret env for all services. In-cluster Service DNS names. */ -}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: crys-shared-env
+  labels:
+    {{- include "crys.labels" . | nindent 4 }}
+data:
+  {{- range $k, $v := .Values.sharedEnv }}
+  {{ $k }}: {{ $v | quote }}
+  {{- end }}

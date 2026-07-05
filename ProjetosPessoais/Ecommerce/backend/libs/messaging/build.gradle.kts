@@ -17,4 +17,10 @@ dependencies {
     api("org.springframework.boot:spring-boot-starter-data-jpa")
     api("org.springframework.kafka:spring-kafka")
     api("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
+    // Tracing API only: capture/inject the W3C context across the outbox -> Kafka hop.
+    // The OTel bridge each saga service already pulls supplies the runtime impl.
+    implementation("io.micrometer:micrometer-tracing")
+
+    testImplementation("io.micrometer:micrometer-tracing-test")
+    testImplementation("org.springframework.boot:spring-boot-starter-test")
 }

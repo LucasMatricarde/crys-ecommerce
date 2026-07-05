@@ -1,0 +1,57 @@
+{{- $mongo := .Values.infra.mongo -}}
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongo
+  labels:
+    {{- include "crys.labels" . | nindent 4 }}
+    {{- include "crys.selectorLabels" "mongo" | nindent 4 }}
+spec:
+  clusterIP: None
+  selector:
+    {{- include "crys.selectorLabels" "mongo" | nindent 4 }}
+  ports:
+    - name: mongo
+      port: 27017
+      targetPort: 27017
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mongo
+  labels:
+    {{- include "crys.labels" . | nindent 4 }}
+    {{- include "crys.selectorLabels" "mongo" | nindent 4 }}
+spec:
+  serviceName: mongo
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "crys.selectorLabels" "mongo" | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "crys.labels" . | nindent 8 }}
+        {{- include "crys.selectorLabels" "mongo" | nindent 8 }}
+    spec:
+      containers:
+        - name: mongo
+          image: {{ $mongo.image }}
+          ports:
+            - containerPort: 27017
+          volumeMounts:
+            - name: data
+              mountPath: /data/db
+          readinessProbe:
+            exec:
+              command: ["mongosh", "--quiet", "--eval", "db.adminCommand('ping')"]
+            periodSeconds: 10
+            failureThreshold: 5
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: {{ $mongo.storage }}

@@ -1,0 +1,32 @@
+/* ============================================================
+   CRYS. — Spacing & Radius tokens
+   Base unit = 4px. Scale named by multiple of base.
+   ============================================================ */
+
+:root {
+  --spacing-1:  4px;
+  --spacing-2:  8px;
+  --spacing-3:  12px;
+  --spacing-4:  16px;
+  --spacing-6:  24px;
+  --spacing-8:  32px;
+  --spacing-12: 48px;
+  --spacing-16: 64px;
+  --spacing-24: 96px;
+  --spacing-32: 128px;
+
+  /* ---- Corner radii ---- */
+  --radius-sm:   8px;   /* chips, price tiles */
+  --radius-md:   16px;  /* image slots, inputs */
+  --radius-lg:   24px;  /* product cards, panels */
+  --radius-pill: 999px; /* buttons, tags, badges */
+
+  /* ---- Shadows / elevation ---- */
+  --shadow-card:    0 0 24px 0 var(--glow-amber-soft);
+  --shadow-molten:  0 0 120px -10px var(--glow-violet), 0 0 80px 0 var(--glow-amber);
+  --shadow-drop:    0 8px 32px rgba(0,0,0,0.45);
+
+  /* ---- Inset hairline helpers (use in box-shadow) ---- */
+  --inset-frost:        inset 0 0 0 1px var(--border-frost);
+  --inset-frost-strong: inset 0 0 0 1px var(--border-frost-strong);
+}

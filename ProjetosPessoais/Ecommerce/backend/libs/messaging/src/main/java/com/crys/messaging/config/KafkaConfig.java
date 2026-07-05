@@ -59,6 +59,10 @@ public class KafkaConfig {
         var factory = new ConcurrentKafkaListenerContainerFactory<String, String>();
         factory.setConsumerFactory(consumerFactory);
         factory.setCommonErrorHandler(errorHandler);
+        // Extract the inbound traceparent from record headers and continue the saga trace
+        // (default Boot propagation is W3C — matches the header the relay writes). The
+        // container resolves the ObservationRegistry bean from the application context.
+        factory.getContainerProperties().setObservationEnabled(true);
         return factory;
     }
 }

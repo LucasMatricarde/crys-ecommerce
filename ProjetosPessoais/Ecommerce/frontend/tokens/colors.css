@@ -1,0 +1,64 @@
+/* ============================================================
+   CRYS. — Crystalline & Molten · Color tokens
+   Base palette + semantic aliases. Dark-first.
+   ============================================================ */
+
+:root {
+  /* ---- Resin Black (neutrals / surfaces) ---- */
+  --resin-black-base:     #07090A; /* deepest void — page background */
+  --resin-black-surface:  #0B0F0C; /* primary surface */
+  --resin-black-elevated: #12171A; /* elevated surface */
+  --resin-black-raised:   #1A2125; /* raised cards / chips */
+
+  /* ---- Trichome Green (botanical core) ---- */
+  --trichome-deep:  #0E3B2A; /* deep forest */
+  --trichome-core:  #1F8A4C; /* signature green */
+  --trichome-frost: #B8F0CE; /* frosted mint */
+  --trichome-ice:   #E8F8EF; /* near-white wash */
+
+  /* ---- Live Resin Amber (molten / primary accent) ---- */
+  --amber-honey: #FFD89B; /* light glow */
+  --amber-core:  #F5A623; /* signature amber */
+  --amber-deep:  #C8761A; /* burnt edge */
+  --amber-burnt: #7A3E0F; /* deepest molten */
+
+  /* ---- Oil-Slick Iridescent (psychedelic spectrum) ---- */
+  --iridescent-violet:  #7B5CFF;
+  --iridescent-magenta: #E94FA1;
+  --iridescent-cyan:    #2FE6D6;
+
+  /* ---- Neutral Ink (text) ---- */
+  --ink-primary: #F4FBF6; /* primary text */
+  --ink-muted:   #8A9A90; /* muted / secondary text */
+
+  /* ===== Semantic aliases ===== */
+  --bg-base:     var(--resin-black-base);
+  --bg-surface:  var(--resin-black-surface);
+  --bg-elevated: var(--resin-black-elevated);
+  --bg-raised:   var(--resin-black-raised);
+
+  --text-primary: var(--ink-primary);
+  --text-muted:   var(--ink-muted);
+  --text-on-amber: var(--resin-black-base); /* text sitting on amber fills */
+
+  --accent-primary:   var(--amber-core);     /* CTAs, price, brand */
+  --accent-secondary: var(--trichome-core);  /* botanical highlights */
+
+  --strain-indica: var(--iridescent-violet);
+  --strain-sativa: var(--amber-core);
+  --strain-hybrid: var(--trichome-core);
+
+  --state-focus: var(--iridescent-violet);
+
+  /* ---- Hairline borders (frosted trichome on glass) ---- */
+  --border-frost:        rgba(184,240,206,0.14); /* default hairline */
+  --border-frost-strong: rgba(184,240,206,0.35); /* hover / active hairline */
+  --border-frost-faint:  rgba(184,240,206,0.08);
+
+  /* ---- Glow / molten effects ---- */
+  --glow-amber:       rgba(245,166,35,0.55);
+  --glow-amber-soft:  rgba(245,166,35,0.30);
+  --glow-violet:      rgba(123,92,255,0.25);
+  --tint-violet-12:   rgba(123,92,255,0.12);
+  --tint-magenta-06:  rgba(233,79,161,0.06);
+}

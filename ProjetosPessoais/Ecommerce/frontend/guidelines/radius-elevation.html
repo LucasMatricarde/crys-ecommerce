@@ -1,0 +1,26 @@
+<!-- @dsCard group="Spacing" viewport="700x150" name="Radius & elevation" subtitle="Corner radii and the frost/glow shadow system" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<link rel="stylesheet" href="../styles.css" />
+<style>
+  html, body { margin: 0; }
+  body { background: var(--bg-base); padding: 22px 24px; font-family: var(--font-mono); }
+  .row { display: flex; gap: 22px; align-items: center; }
+  .col { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+  .box { width: 76px; height: 60px; background: var(--resin-black-raised); display: grid; place-items: center; }
+  .t { font-size: 9px; color: var(--text-muted); }
+  .v { font-size: 9px; color: var(--text-primary); }
+</style>
+</head>
+<body>
+<div class="row">
+  <div class="col"><div class="box" style="border-radius:var(--radius-sm);box-shadow:var(--inset-frost)"></div><span class="v">sm 8</span><span class="t">frost hairline</span></div>
+  <div class="col"><div class="box" style="border-radius:var(--radius-md);box-shadow:var(--inset-frost)"></div><span class="v">md 16</span><span class="t">image / input</span></div>
+  <div class="col"><div class="box" style="border-radius:var(--radius-lg);box-shadow:var(--inset-frost-strong)"></div><span class="v">lg 24</span><span class="t">card · strong</span></div>
+  <div class="col"><div class="box" style="border-radius:var(--radius-pill);width:60px;box-shadow:var(--inset-frost)"></div><span class="v">pill 999</span><span class="t">button · tag</span></div>
+  <div class="col"><div class="box" style="border-radius:var(--radius-lg);box-shadow:var(--shadow-card)"></div><span class="v">glow</span><span class="t">amber card glow</span></div>
+</div>
+</body>
+</html>
